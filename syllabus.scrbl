@@ -1,4 +1,5 @@
 #lang scribble/manual
+@(require (for-label racket/contract))
 
 @(define (mailto addr)
    (hyperlink (format "mailto:~a" addr) addr))
@@ -118,7 +119,7 @@ assignment, you should follow the design recipe for all functions and tactics, a
 individual exercise. The goal is not to simply produce a working program.
 
 All of your functions should have a signature (or contract) or purpose statement. If using
-@racket{define/contract} or some other similar form, no signature is required.
+@racket[define/contract] or some other similar form, no signature is required.
 
 All of your functions should have extensive RackUnit tests. We will go over how to use RackUnit in class.
 If you have taken C211, the amount of tests expected is about the amount of tests you would write in that

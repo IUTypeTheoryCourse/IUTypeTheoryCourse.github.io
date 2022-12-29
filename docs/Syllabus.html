@@ -22,12 +22,14 @@ assigned on Monday every two weeks (starting from Week 2).</p><p>Worksheets are 
 be more traditional exercises, in which you sketch out proofs or derivations on paper. You are expected to
 complete these, because the knowledge from them will make the programming assignments significantly easier.</p><p>Programming assignments are partially auto-graded, and should be submitted to GitHub Classroom.
 These assignments make up <span style="font-weight: bold">100% of your grade for this course</span>.</p><p>Agda assignments should not use postulates or <span class="stt">trustMe</span> anywhere, aside from postulates provided by
-the instructor. Simply postulating everything will pass the autograder, but net you a 0%.</p><p>There are no exams (!!!).</p><h4>1.7<tt>&nbsp;</tt><a name="(part._.I.M.P.O.R.T.A.N.T__.Systematic_program_design)"></a>IMPORTANT: Systematic program design</h4><p><span style="font-weight: bold">This section is primarily relevant for the Racket part of the course.</span></p><p>While there is an autograder that verifies functionality, we will also be grading you based on program design.
+the instructor. Simply postulating everything will pass the autograder, but net you a 0%.</p><p>Sharing code is not only acceptable, but encouraged. However, two people should not submit the exact same
+assignment. When collaborating with another student, you should leave a comment on the function or tactic
+that you collaborated on saying who else worked on it.</p><p>There are no exams (!!!).</p><h4>1.7<tt>&nbsp;</tt><a name="(part._.I.M.P.O.R.T.A.N.T__.Systematic_program_design)"></a>IMPORTANT: Systematic program design</h4><p><span style="font-weight: bold">This section is primarily relevant for the Racket part of the course.</span></p><p>While there is an autograder that verifies functionality, we will also be grading you based on program design.
 There are many, many different ways to write a correct program, but in this course, we ascribe to a specific
 way of writing type-checkers.</p><p>While the goal of an assignment may be "write a type-checker for this module language", when you submit an
 assignment, you should follow the design recipe for all functions and tactics, and you should finish each
 individual exercise. The goal is not to simply produce a working program.</p><p>All of your functions should have a signature (or contract) or purpose statement. If using
-<span class="RktVal">"define/contract"</span> or some other similar form, no signature is required.</p><p>All of your functions should have extensive RackUnit tests. We will go over how to use RackUnit in class.
+<span class="RktSym"><span class="badlink"><span class="RktValLink">define/contract</span></span></span> or some other similar form, no signature is required.</p><p>All of your functions should have extensive RackUnit tests. We will go over how to use RackUnit in class.
 If you have taken C211, the amount of tests expected is about the amount of tests you would write in that
 course. You should write your tests before you write your code.</p><p>Almost all of your functions should follow the structural decomposition template. In this class, it will be
 very rare that any function decomposes the input in a way that isn&rsquo;t just a straightforward pattern match.

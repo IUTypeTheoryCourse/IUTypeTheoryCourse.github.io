@@ -2,4 +2,6 @@
 
 @title{Lecture notes}
 
-TODO
+@(local-table-of-contents #:style 'immediate-only)
+
+@include-section{notes/lecture1.scrbl}
