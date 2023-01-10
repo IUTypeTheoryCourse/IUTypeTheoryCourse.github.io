@@ -3,7 +3,7 @@
 @title[#:style '(toc)]{B629 Spring 2023 -- Proofs as Programs}
 @author[(author+email "Hazel Levine" "hrlevi@iu.edu")]
 
-@bold{The exact contents of this entire course, and webpage, are currently subject to extreme change.}
+@;@bold{The exact contents of this entire course, and webpage, are currently subject to extreme change.}
 
 The goal of this course is to serve as an introduction to two related, but notably distinct, topics:
 @itemlist[

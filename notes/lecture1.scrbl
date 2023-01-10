@@ -92,3 +92,13 @@ We define the meaning of @${\semantics{e}_v} recursively for each connective:
 \end{align*}
 }
 where each connective on booleans is defined as usual.
+
+@bold{Definition:} A @tt{prop-expr} @${e} is a @italic{tautology} if
+for all valuations @${v}, @${\semantics{e}_v = \mathsf{T}}.
+
+@bold{Definition:} @${e} is @italic{satisfiable} if there is a valuation
+@${v} such that @${\semantics{e}_v = \mathsf{T}}.
+
+@bold{Definition:} @${e} is a @italic{contradiction} if there is no valuation
+@${v} such that @${\semantics{e}_v = \mathsf{T}}, or in other words, if for
+all valuations @${v}, @${\semantics{e}_v = \mathsf{F}}.

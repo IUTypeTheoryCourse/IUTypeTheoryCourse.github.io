@@ -2,4 +2,6 @@
 
 @title{Assignments}
 
-TODO.
+@(local-table-of-contents #:style 'immediate-only)
+
+@include-section{assignments/a1.scrbl}
