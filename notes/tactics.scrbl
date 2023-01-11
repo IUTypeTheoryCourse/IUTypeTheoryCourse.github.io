@@ -1,12 +1,13 @@
 #lang scribble/manual
 
 @(require scribble-math/dollar
-          "../common.rkt")
+          "../common.rkt"
+          (for-label racket))
 @(use-mathjax)
 @(mathjax-preamble)
 
-@; by: dare + aradia, 2022-12-04
-@title[#:style (with-html5 manual-doc-style)]{Lecture 4: Designing tactics}
+@; by: dare + aradia, 2023-01-04
+@title[#:style (with-html5 manual-doc-style)]{Designing tactics}
 
 @section{Tactics}
 
@@ -138,7 +139,10 @@ we write tests that codify that:
     (check-equal? ((assumption 'x) (extend-context '() 'x (prop-atomic 'A)))
                   (prop-atomic 'A))
     (check-equal? ((assumption 'y)
-                   (extend-context (extend-context '() 'y (prop-→ (prop-atomic 'B) (prop-atomic 'B)))
+                   (extend-context (extend-context '()
+                                                   'y
+                                                   (prop-→ (prop-atomic 'B)
+                                                           (prop-atomic 'B)))
                                    'x (prop-atomic 'A)))
                   (prop-→ (prop-atomic 'B) (prop-atomic 'B)))
     (check-error ((assumption 'x) '())))
@@ -191,6 +195,24 @@ As for step 4, we begin by writing our our purpose statement, contract, and temp
      'chk
      (λ (Γ goal)       
        ...)))
+)
+
+We now need to write some tests. The only base tactic we have is @tt{assumption}, so we simply turn
+it into a @tt{ChkTactic} using our combinator and see what happens:
+@#reader scribble/comment-reader
+(racketblock
+  (module+ test
+    (define ctx (extend-context
+                 (extend-context '()
+                                 'y
+                                 (prop-→ (prop-atomic 'B)
+                                         (prop-atomic 'B)))
+                 'x (prop-atomic 'A)))
+    (check-success ((chk (assumption 'x)) ctx (prop-atomic 'A)))
+    (check-success ((chk (assumption 'y)) ctx (prop-→ (prop-atomic 'B)
+                                                      (prop-atomic 'B))))
+    (check-error ((chk (assumption 'z)) ctx (prop-⊥)))
+    (check-error ((chk (assumption 'x)) ctx (prop-⊥))))
 )
 
 So, we begin our game of type tetris to fill in the definition. We know that @tt{Γ} is a @tt{Context},
@@ -262,3 +284,5 @@ So, our final code is:
        (tac Γ prop)
        prop)))
 )
+
+We do not add tests to @tt{imbue} yet, because we have no good @tt{ChkTactic}s to test with.
