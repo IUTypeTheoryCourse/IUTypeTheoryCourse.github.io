@@ -46,6 +46,52 @@ on step 2, and your output turns into your return type.}
 Most of the first few steps will be given to you for assignments 1 and 2, primarily because we do not yet have
 the machinery to make well-informed decisions on what should be a check tactic versus an infer tactic.
 
+@; 8y: olive, 2023-01-11
+@section{Propositions in Racket}
+As we move from paper to code, we have to turn our grammars into data definitions. So:
+@#reader scribble/comment-reader
+(racketblock
+  ;; A Proposition is one of:
+  ;; - (prop-atomic Symbol)
+  ;; - (prop-→ Proposition Proposition)
+  ;; - (prop-∧ Proposition Proposition)
+  ;; - (prop-∨ Proposition Proposition)
+  ;; - (prop-⊥)
+  (struct prop-atomic (name) #:transparent)
+  (struct prop-→ (assumption consequent) #:transparent)
+  (struct prop-∧ (left right) #:transparent)
+  (struct prop-∨ (left right) #:transparent)
+  (struct prop-⊥ () #:transparent)
+)
+where we omit @${\neg} because it is superfluous in the presence of @${\bot}.
+
+It is tedious to write out these, and they do not pretty-print well. So, we define two helper functions
+that take S-expressions to propositions and back:
+@#reader scribble/comment-reader
+(racketblock
+  ;; parse : Sexp -> Prop
+  ;; Parses an infix S-expression into a proposition.
+  (define (parse s)
+    (match s
+      [`(,assumption → ,consequent) (prop-→ (parse assumption)
+                                            (parse consequent))]
+      [`(,l ∧ ,r) (prop-∧ (parse l) (parse r))]
+      [`(,l ∨ ,r) (prop-∨ (parse l) (parse r))]
+      [`(¬ ,v) (prop-→ (parse v) (prop-⊥))]
+      ['⊥ (prop-⊥)]
+      [(? symbol?) (prop-atomic s)]))
+  
+  ;; pp : Prop -> Sexp
+  ;; Pretty-prints a proposition.
+  (define (pp prop)
+    (match prop
+      [(prop-atomic name) name]
+      [(prop-→ assumption consequent) `(,(pp assumption) → ,(pp consequent))]
+      [(prop-∧ l r) `(,(pp l) ∧ ,(pp r))]
+      [(prop-∨ l r) `(,(pp l) ∨ ,(pp r))]
+      [(prop-⊥) '⊥]))
+)
+
 @; by: ada, 2023-01-05
 
 @section{Tactics in Racket}
@@ -286,3 +332,60 @@ So, our final code is:
 )
 
 We do not add tests to @tt{imbue} yet, because we have no good @tt{ChkTactic}s to test with.
+
+@; 8y: olive + roxy, 2023-01-17
+@section{Check versus infer and solving unknowns}
+
+Let's think a bit harder about why we have these different tactics. In particular, let's look at the rule
+for implication elimination:
+@$${
+\ir{(\to_{\mathrm{elim}})}{A \to B ~~~ A}{B}
+}
+
+So, given that @${A \to B} and @${A}, we can prove @${B}. Under our system, it is not at all straightforward
+to know how to actually do this. How do we know what @${A} and @${B} are?
+
+This is the purpose of our check/infer system, known in the literature as @bold{bidirectional typing}.
+Our @italic{check} rules correspond to what would be known in type theory as "type checking", and our
+@italic{infer} rules correspond to "type inference" or "type synthesis".
+
+The question then turns to how to do our design recipe steps 1-2, of figuring out which things above the line
+and below the line are check/infer. Let's step through why @tt{modus-ponens : SynTactic ChkTactic -> SynTactic}
+works.
+
+First, we infer the proposition corresponding to the implication. Our input @tt{SynTactic} gives us the
+proposition @${A \to B}. So, now that we know @${A \to B}, we know what @${A} is and @${B} is. Consequently,
+we are free to check our tactic witnessing the assumption as @${A}, so that can be a @tt{ChkTactic}.
+
+Finally, we also know @${B}, which is our consequent, so we are free to return it, thereby giving us a
+@tt{SynTactic}.
+
+So how do we determine exactly what combination to use? We design our systems around the criterion of
+@italic{mode-correctness}:
+
+@bold{Definition:} A bidirectional judgment is @italic{mode-correct} if:
+@itemlist[
+@item{the premises are mode-correct: for each premise, the input meta-variable is known.}
+@item{the conclusion is mode-correct: if we have all the premises, the output of the conclusion is known.}
+]
+
+So, for example, the signature @tt{modus-ponens : ChkTactic ChkTactic -> ChkTactic} is @italic{not} mode-correct.
+We know @${B} from the goal of the conclusion, but we have no way of figuring out what @${A} is to be able
+to construct the proposition @${A \to B}.
+
+The mode-correct ways to construct @tt{modus-ponens} are:
+@itemlist[
+@item{@tt{SynTactic SynTactic -> SynTactic}}
+@item{@tt{SynTactic ChkTactic -> SynTactic}}
+@item{@tt{SynTactic ChkTactic -> ChkTactic}}
+@item{@tt{ChkTactic SynTactic -> ChkTactic}}
+]
+where the fourth one is a bit more complex as to why: we need to synthesize the proposition of the consequent
+before we can construct the assumption.
+
+Note that @italic{if your system is not mode-correct, it cannot be written in code.}
+
+The decision to go with introduction rules as check tactics and elimination rules as infer tactics is common
+practice, though entirely arbitrary. Any mode-correct rule will technically work.
+
+Note, however, that because @tt{imbue} returns a @tt{SynTactic}, ...

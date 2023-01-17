@@ -77,6 +77,7 @@ Some useful, but not strictly necessary, resources are:
 @item{@italic{Types and Programming Languages}, by Benjamin C. Pierce}
 @item{@italic{@hyperlink["https://davidchristiansen.dk/tutorials/nbe/"]{Checking Dependent Types with Normalization by Evaluation}}, by David Christiansen}
 @item{@italic{@hyperlink["https://cs.uwaterloo.ca/~plragde/flaneries/LACI/"]{Logic and Computation Intertwined}}, by Prabhakar Ragde}
+@item{@italic{@hyperlink["https://arxiv.org/pdf/1908.05839.pdf"]{Bidirectional Typing}, by Jana Dunfield and Neel Krishnaswami}}
 ]
 This list will be updated throughout the semester.
 
