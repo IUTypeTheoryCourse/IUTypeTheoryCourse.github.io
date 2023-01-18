@@ -9,13 +9,6 @@
 @; by: olive, 2022-12-29
 @title[#:style (with-html5 manual-doc-style)]{Assignment 1: Intuitionistic propositional logic}
 
-@; By: Rose, 2023-01-09
-@bold{This assignment may be too difficult to assign as A1. If the consensus shows, I will write an A1
-that is the basics of my Racket style, and turn this into A2.}
-
-@bold{I am not currently aware of how long it will take to get to tactics.}
-@; Back to Olive.
-
 This assignment will be assigned on January 17th, 2022, and will be due on January 31, 2022.
 Corrections will be accepted until February 14, 2022.
 

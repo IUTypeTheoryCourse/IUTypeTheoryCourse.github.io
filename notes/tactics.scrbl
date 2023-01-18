@@ -388,4 +388,18 @@ Note that @italic{if your system is not mode-correct, it cannot be written in co
 The decision to go with introduction rules as check tactics and elimination rules as infer tactics is common
 practice, though entirely arbitrary. Any mode-correct rule will technically work.
 
-Note, however, that because @tt{imbue} returns a @tt{SynTactic}, ...
+@; by: the roxster, 2023-01-18
+Note, however, that because @tt{imbue} returns a @tt{SynTactic}, the different rules change the
+@italic{annotation characteristic} of our language --- when we eventually make the jump from propositions
+to types and then to concrete syntax, where we put our @tt{SynTactic}s vs @tt{ChkTactic}s will change where
+we have to annotate our terms.
+
+For this reason, we have two somewhat arbitrary rules we use to narrow down which mode-correct rules work:
+@itemlist[
+@item{@bold{Avoid asserting equality.} If you need to use @tt{assert-prop-equal!} anywhere, you can probably
+get away with a @tt{ChkTactic} rather than a @tt{SynTactic}. Same goes for calling @tt{chk} anywhere
+@italic{within} your tactic.}
+@item{@bold{Intro rules are check, elimination rules are infer.} This is a pretty good baseline to get a good
+annotation characteristic. Whenever you see an eliminator, you can mentally note that you probably need an
+annotation.}
+]
