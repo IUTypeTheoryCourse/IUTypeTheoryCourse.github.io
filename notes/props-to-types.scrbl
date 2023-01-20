@@ -151,7 +151,13 @@ we get the following rules:
    {\Gamma \vdash x \Rightarrow A}
 }
 
-This doesn't seem complete, and it's not. If we try to construct the proof tree for
+To sanity check our work, we define a criterion to know when we're done writing our bidirectional rules:
+
+@bold{Definition:} A bidirectional type system is @italic{complete} if whenever @${\Gamma \vdash e : T},
+then @${\Gamma \vdash e' \Leftarrow T} and @${\Gamma \vdash e' \Rightarrow T}, where @${e'} is a version of @${e}
+with any amount of added type annotations.
+
+This system doesn't seem complete, and it's not. If we try to construct the proof tree for
 @${\vdash \lambda a. \lambda f. f\ a : A \to ((A \to B) \to B)}, we can't, because we have no way to turn
 inference into checking and vice versa. In our tactic system, we wrote @tt{chk} and @tt{imbue} for this purpose,
 so let's turn them into rules.
@@ -191,8 +197,88 @@ We first start by renaming our tactics:
 @item{@tt{imbue} becomes @tt{ann}.}
 @item{@tt{introduce} stays the same.}
 @item{@tt{modus-ponens} becomes @tt{app}.}
+@item{@tt{assumption} becomes @tt{var}.}
 ]
 
 We now want to @italic{make} a type checker (or synthesizer) given a term. We do this with two functions:
-@tt{type-check : ConcreteSyntax -> ChkTactic}, and @tt{type-synth : ConcreteSyntax -> SynTactic}, each of which
+@tt{type-check : ConcreteSyntax -> ChkTactic}, and @tt{type-infer : ConcreteSyntax -> SynTactic}, each of which
 produces a tactic corresponding to the syntax we have.
+
+In the context of @tt{type-check}, you can think of this kind of like a curried verifier for a given sequent:
+to show that @${\Gamma \vdash e \Leftarrow T}, we give @tt{type-check} @${e}, and it gives us a tactic
+taking @${\Gamma} and @${T}. The same logic applies for @tt{type-infer}, which takes @${e}, @${\Gamma},
+and gives us @${T}.
+
+@; 8y: June Eg8ert, 2023-01-20
+So, let's write out our purpose statements and templates for these functions:
+@#reader scribble/comment-reader
+(racketblock
+  ;; type-check : ConcreteSyntax -> ChkTactic
+  ;; Produces a type checker for the given concrete term.
+  (define (type-check stx)
+    (match stx
+      [(cs-var name) ...]
+      [(cs-lam var body) ...]
+      [(cs-app rator rand) ...]
+      [(cs-ann tm tp) ...]))
+      
+  ;; type-infer : ConcreteSyntax -> SynTactic
+  ;; Produces a type inferrer for the given concrete term.
+  (define (type-infer stx)
+    (match stx
+      [(cs-var name) ...]
+      [(cs-lam var body) ...]
+      [(cs-app rator rand) ...]
+      [(cs-ann tm tp) ...]))
+)
+
+Let's start with @tt{type-check}. Note that the only tactic combinator we have (aside from @tt{ann}) that
+returns a @tt{ChkTactic} is @tt{introduce}, which takes a @tt{ChkTactic} as input.
+
+All the other pieces of syntax and their corresponding tactics return a @tt{SynTactic}. We can use @tt{chk}
+to turn those into @tt{ChkTactic}s. So, we fill it in, adding a fall-through for all other pieces of syntax:
+@#reader scribble/comment-reader
+(racketblock
+  ;; type-check : ConcreteSyntax -> ChkTactic
+  ;; Produces a type checker for the given concrete term.
+  (define (type-check stx)
+    (match stx
+      [(cs-lam var body) (introduce var (type-check body))]
+      [_ (chk (type-infer stx))]))
+)
+
+As for @tt{type-infer}, we simply fill in the natural recursion (making all the types line up) for all
+the syntaxes corresponding to combinators returning @tt{SynTactic}s:
+@#reader scribble/comment-reader
+(racketblock
+  ;; type-infer : ConcreteSyntax -> SynTactic
+  ;; Produces a type inferrer for the given concrete term.
+  (define (type-infer stx)
+    (match stx
+      [(cs-var name) (var name)]
+      [(cs-lam var body) ...]
+      [(cs-app rator rand) (app (type-infer rator) (type-check rand))]
+      [(cs-ann tm tp) (ann (type-check tm) tp)]))
+)
+However, @tt{introduce} returns a @tt{ChkTactic}, and we can only turn a @tt{ChkTactic} into a @tt{SynTactic}
+if we know what proposition it checks as. Consequently, we would need a type annotation, so we can't actually
+infer any type, and we throw an error:
+@#reader scribble/comment-reader
+(racketblock
+  ;; type-infer : ConcreteSyntax -> SynTactic
+  ;; Produces a type inferrer for the given concrete term.
+  (define (type-infer stx)
+    (match stx
+      [(cs-var name) (var name)]
+      [(cs-app rator rand) (app (type-infer rator) (type-check rand))]
+      [(cs-ann tm tp) (ann (type-check tm) tp)]
+      [_ (error (format "the term ~a needs more type annotations!" stx))]))
+)
+
+And we now have a fully functional type checker! Assuming your A1 is done, try out:
+@racketblock[
+  (run-chk 
+   (parse '(A → ((A → B) → B)))
+   (type-check (cs-lam 'a (cs-lam 'f (cs-app (cs-var 'f) (cs-var 'a))))))
+]
+which should succeed (even if you haven't finished elaboration).
