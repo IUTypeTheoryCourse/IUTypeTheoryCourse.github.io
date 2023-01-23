@@ -27,10 +27,11 @@ See the homepage.
 @tabular[
 #:style 'boxed
 #:column-properties '(center)
-#:row-properties '(bottom-border)
+@;#:row-properties '(bottom-border)
 (list
   (list @bold{Instructor} @bold{Contact Details} @bold{Office} @bold{Office Hours})
-  (list "Hazel Levine" @mailto["hrlevi@iu.edu"] "Luddy Hall 3015M" "TBD"))
+  (list "Hazel Levine" @mailto["hrlevi@iu.edu"] "Luddy Hall 3015M" "10-11:30AM Tuesday")
+  (list "" "" "" "12:30-2:30PM Friday")) 
 ]
 
 @section{Prerequisites}
