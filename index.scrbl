@@ -21,6 +21,7 @@ and prove various theorems both in and about homotopy type theory.
 @(local-table-of-contents #:style 'immediate-only)
 
 @include-section{syllabus.scrbl}
+@include-section{calendar.scrbl}
 @include-section{lecture-notes.scrbl}
 @include-section{assignments.scrbl}
 @include-section{worksheets.scrbl}
