@@ -8,3 +8,4 @@
 @include-section{notes/tactics.scrbl}
 @include-section{notes/elab.scrbl}
 @include-section{notes/props-to-types.scrbl}
+@include-section{notes/nbe.scrbl}
