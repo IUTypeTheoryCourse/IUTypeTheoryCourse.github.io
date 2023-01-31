@@ -102,17 +102,17 @@
 
 ;; assert-type-equal! : Type Type -> Void
 ;; Asserts that two types are equal, and error if not.
-(define (assert-prop-equal! t1 t2)
+(define (assert-type-equal! t1 t2)
   (unless (type=? t1 t2)
     ;; NOTE: "~a" is kind of like "%s" in C's printf.
     (throw-type-error! "non-equal types: ~a is not ~a" (pp-type t1) (pp-type t2))))
 
-;; A ChkTactic is a (chk-tactic [Context Type -> Syntax])
-;; A SynTactic is a (syn-tactic [Context -> [PairOf Type Syntax]])
-(struct chk-tactic (f)
+;; A ChkTactic is a (chk-tactic Symbol [Context Type -> Syntax])
+;; A SynTactic is a (syn-tactic Symbol [Context -> [PairOf Type Syntax]])
+(struct chk-tactic (name f)
   #:transparent
   #:property prop:procedure (struct-field-index f))
-(struct syn-tactic (f)
+(struct syn-tactic (name f)
   #:transparent
   #:property prop:procedure (struct-field-index f))
 
@@ -136,7 +136,7 @@
    'chk
    (λ (Γ goal)
      (match-define (cons tp tm) (tac Γ))
-     (assert-type-equal! type goal)
+     (assert-type-equal! tp goal)
      tm)))
 
 ;; ann : ChkTactic Type -> SynTactic
