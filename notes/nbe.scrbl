@@ -227,7 +227,21 @@ when possible. It's very elegant to think about when described in a single sente
 and the code is awful to read, and it performs terribly. Let's not do that and never discuss it again.
 
 Instead, we can turn our closures back into lambdas, by a process called @italic{quotation}
-(or @italic{reification}). To do this, we carefully limit our @tt{Value} grammar to only capture normal forms:
+(or @italic{reification}). To do this, we carefully limit our @tt{Value} grammar to only capture normal forms
+(ommitting let-bindings for the time being):
+@racketgrammar[#:literals (λ)
+norm
+  neutral
+  (λ (id) norm)
+]
+@racketgrammar[
+neutral
+  id
+  (neutral norm) 
+]
+
+We then construct data definitions for this, in a somewhat roundabout fashion. (Again, ignore let-bindings for
+now).
 @#reader scribble/comment-reader
 (racketblock
   ;; A Cut is a (value-cut Head [ListOf Form])
@@ -248,11 +262,49 @@ Instead, we can turn our closures back into lambdas, by a process called @italic
   ;; - (value-lam String Closure)
   (struct value-lam (name closure) #:transparent)
 )
-noting that this could be significantly simpler, but will become more complex as we add more eliminators.
 
-Roughly, a @tt{Value} represents a normal form as produced by the evaluator, a @tt{Form} represents an
-eliminator, a @tt{Head} represents a neutral expression (which corresponds to variables that do not yet have a
-value), and a @tt{Cut} represents a stack of eliminators applied to some head.
+Our @tt{Value} represents our normal form, and our @tt{Cut} represents our neutral. In essence, our @tt{Cut}
+is a stack of eliminators applied to our head, which is a variable, and our only eliminator is application.
+
+Our evaluator will then produce one of these. Once we have one, we need to be able to move backwards to get back
+our @tt{Syntax}, since our @tt{Closure} data type doesn't work. So how do we turn a closure, which is stuck, back
+into a piece of syntax?
+
+To do this, we pull a magic symbolic variable out of our hat, and then apply it to the closure with our usual
+evaluation. This process is called @italic{quotation}, but since we're writting Racket and we can't call it that,
+I'll be calling it @italic{reification}.
+
+Let's work an example. To distinguish our syntax and value lambdas, I'll be writing @${\lambda_S} and
+@${\lambda_V}. So, let's try normalizing @${(\lambda_S x. \lambda_S y. x\ y) (\lambda_S x. x)}.
+
+We call @tt{evaluate} with an empty environment:
+@$${
+\begin{align*}
+  \mathrm{eval\ } (\lambda_S x. \lambda_S y. x\ y) (\lambda_S x. x)\ []
+  &= \mathrm{apply\ } (\mathrm{eval\ } (\lambda_S x. \lambda_S y. x\ y)\ [])\ (\mathrm{eval\ } (\lambda_S x. x)\ []) \\
+  &= \mathrm{apply\ } (\lambda_V x. (\mathrm{closure\ } (\lambda_S y. x\ y)\ [])) (\lambda_V x. (\mathrm{closure\ } x\ [])) \\
+  &= \mathrm{eval\ } (\lambda_S y. x\ y)\ [x = (\lambda_V x. (\mathrm{closure\ } x\ []))] \\
+  &= \lambda_V y. (\mathrm{closure\ } (x\ y) [x = (\lambda_V x. (\mathrm{closure\ } x\ []))])
+\end{align*}
+}
+and, strictly speaking, this follows our normal form grammar.
+
+We now want to perform reification to read it back into a piece of syntax. Let's suppose we had a magic variable
+@${\mathbf{y}} we pull out from our hat. Then, to reify:
+@$${
+\begin{align*}
+  \mathrm{reify\ } \lambda_V y. (\mathrm{closure\ } (x\ y) [x = (\lambda_V x. (\mathrm{closure\ } x\ []))])
+  &= \lambda_S y. \mathrm{reify\ } \mathrm{apply\ } (\lambda_V y. (\mathrm{closure\ } (x\ y) [x = (\lambda_V x. (\mathrm{closure\ } x\ []))]))
+  \mathbf{y} \\
+  &= \lambda_S y. \mathrm{reify\ } \mathrm{eval\ } (x\ y) [x = (\lambda_V x. (\mathrm{closure\ } x\ [], y = \mathbf{y}))] \\
+  &= \ldots \\
+  &= \lambda_S y. \mathrm{reify\ } \mathrm{apply\ } (\lambda_V x. (\mathrm{closure\ } x\ [])) \mathbf{y} \\
+  &= \lambda_S y. \mathrm{reify\ } \mathbf{y} \\
+  &= \lambda_S y. \mathbf{y}
+\end{align*}
+}
+
+I'll also work an example with a let binding in class.
 
 So, let's change our evaluator to produce these. First, we write a couple of helpers that produce
 the corresponding cuts:
