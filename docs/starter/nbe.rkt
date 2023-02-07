@@ -115,10 +115,6 @@
   (match form
     [(value-app (value-ann rand A)) (syntax-app exp (reify size rand A))]))
 
-;; reify-closure : Number Closure -> Syntax
-(define (reify-closure size closure)
-  (reify (add1 size) (apply-closure closure (value-cut (value-local size) '()))))
-
 ;; normalize : Syntax Type -> Syntax
 ;; Produces the normal form of the given syntax.
 (define (normalize tm tp)

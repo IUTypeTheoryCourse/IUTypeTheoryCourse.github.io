@@ -99,7 +99,7 @@ requires computation and possibly uniqueness rules.</p><p>In lecture, we present
 ~~~
 \ir{(\to_\eta)}
    {\Gamma \vdash f : A \to B}
-   {\Gamma \vdash f = (\lambda f. x)\ x : A \to B}</div></p><p>In the rest of this, we will be extending our normalizer to handle computation and uniqueness rules
+   {\Gamma \vdash f = (\lambda x. f x) : A \to B}</div></p><p>In the rest of this, we will be extending our normalizer to handle computation and uniqueness rules
 for each of our types in A2. We start with our A2 code, and add the normalizer in the starter code,
 available <a href="starter/nbe.rkt">here</a>.</p><p><span style="font-weight: bold">Exercise 1:</span> <span style="font-style: italic">Products.</span> We add a computation rule to our system for products, but not a
 uniqueness rule. Note that we <span style="font-style: italic">could</span> add a uniqueness rule, but we do not.</p><p><div class="math">\ir{(\times_{\beta_1})}

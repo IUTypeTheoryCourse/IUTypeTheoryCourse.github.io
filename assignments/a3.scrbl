@@ -24,7 +24,7 @@ In lecture, we presented the following rules for function types:
 ~~~
 \ir{(\to_\eta)}
    {\Gamma \vdash f : A \to B}
-   {\Gamma \vdash f = (\lambda f. x)\ x : A \to B}
+   {\Gamma \vdash f = (\lambda x. f x) : A \to B}
 }
 
 In the rest of this, we will be extending our normalizer to handle computation and uniqueness rules
