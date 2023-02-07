@@ -9,8 +9,8 @@
 @; 8y: olive, 2023-01-30
 @title[#:style (with-html5 manual-doc-style)]{Assignment 2: Simply typed lambda calculus}
 
-This assignment will be assigned on January 31, 2022, and will be due on February 6, 2022.
-Corrections will be accepted until February 20th, 2022.
+This assignment will be assigned on January 31, 2023, and will be due on February 6, 2023.
+Corrections will be accepted until February 20th, 2023.
 
 The purpose of this assignment is to create an elaborating type checker for the simply-typed
 lambda calculus by extending our proof checker for propositional logic. This change is relatively

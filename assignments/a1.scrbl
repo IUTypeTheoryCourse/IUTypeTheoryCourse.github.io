@@ -6,11 +6,11 @@
 @(use-mathjax)
 @(mathjax-preamble)
 
-@; by: olive, 2022-12-29
+@; by: olive, 2023-12-29
 @title[#:style (with-html5 manual-doc-style)]{Assignment 1: Intuitionistic propositional logic}
 
-This assignment will be assigned on January 17th, 2022, and will be due on January 31, 2022.
-Corrections will be accepted until February 14, 2022.
+This assignment will be assigned on January 17th, 2023, and will be due on January 31, 2023.
+Corrections will be accepted until February 14, 2023.
 
 The purpose of this assignment is to create a rudimentary proof assistant for IPL, looking
 similar to our existing proof-trees except bottom-up instead of top-down.
