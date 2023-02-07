@@ -5,17 +5,17 @@
 ;; A Closure is a (closure Syntax Environment)
 (struct closure (term env) #:transparent)
 
-;; A Environment is a [ListOf [PromiseOf Value]]
+;; A Environment is a [ListOf Value]
 
 ;; empty-env : -> Environment
 (define (empty-env)
   '())
 
-;; extend-env : Environment [PromiseOf Value] -> Environment
+;; extend-env : Environment Value -> Environment
 (define (extend-env env x)
   (cons x env))
 
-;; apply-env : Environment Number -> [PromiseOf Value]
+;; apply-env : Environment Number -> Value
 (define apply-env list-ref)
 
 ;; env-size : Environment -> Number
@@ -61,7 +61,7 @@
 (define (evaluate exp env)
   (match exp
     [(syntax-ann tm _) (evaluate tm env)]
-    [(syntax-local n) (force (apply-env env n))]
+    [(syntax-local n) (apply-env env n)]
     [(syntax-lam value body) (value-lam value (closure body env))]
     [(syntax-app rator rand) (do-app (evaluate rator env)
                                      (evaluate rand env))]))
@@ -78,7 +78,7 @@
 ;; Applies the closure to the value.
 (define (apply-closure clo rand)
   (match-define (closure tm env) clo)
-  (evaluate tm (extend-env env (delay/strict rand))))
+  (evaluate tm (extend-env env rand)))
 
 ;; reify : Number Value Type -> Syntax
 ;; Turns a value under the given environment size into a syntax.
