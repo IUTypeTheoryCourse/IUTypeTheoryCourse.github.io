@@ -89,8 +89,8 @@ required. Use the <span class="stt">syntax-hole</span> node as the piece of synt
 hole has type <span class="math">A</span>, even if we want to check it as <span class="math">A \to B</span>.</p><h4>4.3<tt>&nbsp;</tt><a name="(part._.Assignment_3__.Normalization_by_evaluation)"></a>Assignment 3: Normalization by evaluation</h4><p><div class="math">\newcommand{\ir}[3]{\displaystyle\frac{#2}{#3}~{\textstyle #1}}
 \newcommand{\semantics}[1]{[\![ #1 ]\!]}
 \newcommand{\fst}[1]{\mathsf{fst\ } #1}
-\newcommand{\snd}[1]{\mathsf{snd\ } #1}</div></p><p>This assignment will be assigned on February 7, 2023, and will be due on February 14, 2023.
-Corrections will be accepted until February 28, 2023.</p><p>The purpose of this assignment is to extend your work for A2, and normalize the core terms that
+\newcommand{\snd}[1]{\mathsf{snd\ } #1}</div></p><p>This assignment will be assigned on February 7, 2023, and will be due on February <span style="font-weight: bold">17</span>, 2023.
+Corrections will be accepted until <span style="font-weight: bold">March 3</span>, 2023.</p><p>The purpose of this assignment is to extend your work for A2, and normalize the core terms that
 come out of your elaborating type checker. This change requires a lot of mechanical work, and also
 requires computation and possibly uniqueness rules.</p><p>In lecture, we presented the following rules for function types:
 <div class="math">\ir{(\to_\beta)}
@@ -101,8 +101,8 @@ requires computation and possibly uniqueness rules.</p><p>In lecture, we present
    {\Gamma \vdash f : A \to B}
    {\Gamma \vdash f = (\lambda x. f x) : A \to B}</div></p><p>In the rest of this, we will be extending our normalizer to handle computation and uniqueness rules
 for each of our types in A2. We start with our A2 code, and add the normalizer in the starter code,
-available <a href="starter/nbe.rkt">here</a>.</p><p><span style="font-weight: bold">Exercise 1:</span> <span style="font-style: italic">Products.</span> We add a computation rule to our system for products, but not a
-uniqueness rule. Note that we <span style="font-style: italic">could</span> add a uniqueness rule, but we do not.</p><p><div class="math">\ir{(\times_{\beta_1})}
+available <a href="starter/nbe.rkt">here</a>.</p><p><span style="font-weight: bold">Exercise 0:</span> <span style="font-style: italic">Products (done in class).</span> We add a computation rule to our system for products,
+but not a uniqueness rule. Note that we <span style="font-style: italic">could</span> add a uniqueness rule, but we do not.</p><p><div class="math">\ir{(\times_{\beta_1})}
    {\Gamma \vdash a : A ~~~ \Gamma \vdash b : B}
    {\Gamma \vdash \mathrm{fst}\ (\mathrm{cons}\ a\ b) = a : A}
 ~~~
@@ -112,18 +112,24 @@ uniqueness rule. Note that we <span style="font-style: italic">could</span> add 
 thereby producing a <span class="stt">value-cons</span> node.</p><p>Then, to support <span class="stt">syntax-fst</span> and <span class="stt">syntax-snd</span>, design functions <span class="stt">do-fst : Value -&gt; Value</span>
 and <span class="stt">do-snd : Value -&gt; Value</span> that account for all relevant <span class="stt">Value</span>s (so, <span class="stt">Cut</span>s and <span class="stt">value-cons</span>).
 When encountering a neutral, push <span class="stt">value-fst</span> and <span class="stt">value-snd</span> onto the spine.</p><p>Then, extend <span class="stt">reify</span> to account for it as well, modifying <span class="stt">reify-form</span> and <span class="stt">reify</span>. Make sure to
-preserve type information throughout your cuts.</p><p><span style="font-weight: bold">Exercise 2:</span> <span style="font-style: italic">Sums.</span> Here&rsquo;s the computation rules (again, no uniqueness) for sums:</p><p><div class="math">\ir{(+_{\beta_1})}
+preserve type information throughout your cuts.</p><p><span style="font-weight: bold">Exercise 1:</span> <span style="font-style: italic">Motives.</span> Note that our <span class="stt">Syntax</span> and <span class="stt">Value</span> data definitions have changed
+slightly from those in class. In particular, <span class="stt">syntax-+-elim</span> now has a <span class="stt">motive</span> field, which is a
+<span style="font-style: italic">type</span>. It represents the type we are eliminating into: for example, if the result of <span class="stt">syntax-+-elim</span>
+is <span class="math">C</span> and you&rsquo;re eliminating an <span class="math">A + B</span>, then the motive argument is <span class="math">C</span> and the function types
+would be <span class="math">A \to C</span> and <span class="math">B \to C</span>.</p><p>Don&rsquo;t change your <span class="stt">ConcreteSyntax</span> data definition: instead, in the tactics handling <span class="stt">+-elim</span> and
+<span class="stt">&#8869;-elim</span>, add the motive as an argument during elaboration. So, if the tactic returns a <span class="math">C</span>, put that
+<span class="math">C</span> in the resultant syntax as well.</p><p><span style="font-weight: bold">Exercise 2:</span> <span style="font-style: italic">Sums.</span> Here&rsquo;s the computation rules (again, no uniqueness) for sums:</p><p><div class="math">\ir{(+_{\beta_1})}
    {\Gamma \vdash f : A \to C ~~~ \Gamma \vdash g : B \to C ~~~ \Gamma \vdash a : A}
-   {\Gamma \vdash \mathrm{+-elim}\ f\ g\ (\mathrm{inl}\ a) = f\ a : C}
+   {\Gamma \vdash \mathrm{+-elim}\ C\ (\mathrm{inl}\ a)\ f\ g = f\ a : C}
 ~~~
 \ir{(+_{\beta_2})}
    {\Gamma \vdash f : A \to C ~~~ \Gamma \vdash g : B \to C ~~~ \Gamma \vdash b : B}
-   {\Gamma \vdash \mathrm{+-elim}\ f\ g\ (\mathrm{inr}\ b) = g\ b : C}</div></p><p>Again, extend <span class="stt">evaluate</span> to handle <span class="stt">syntax-inl</span> and <span class="stt">syntax-inr</span>. Then, design a function
+   {\Gamma \vdash \mathrm{+-elim}\ C\ (\mathrm{inr}\ b)\ f\ g = g\ b : C}</div></p><p>Again, extend <span class="stt">evaluate</span> and <span class="stt">reify</span> to handle <span class="stt">syntax-inl</span> and <span class="stt">syntax-inr</span>. Then, design a function
 <span class="stt">do-+-elim : Value Value Value -&gt; Value</span> accounting for all relevant <span class="stt">Value</span>s. When encountering a neutral,
-push <span class="stt">value-+-elim</span> onto the spine.</p><p><span style="font-weight: bold">Exercise 3:</span> <span style="font-style: italic">Bottom.</span> We have no computation or uniqueness rule for bottom. However, it still
-needs to be added to <span class="stt">evaluate</span> and <span class="stt">reify</span>.</p><p>Design a function <span class="stt">do-&#8869;-elim : Value Type -&gt; Value</span> that performs bottom elimination.</p><p>Note that you will have to pass in a type for typed normalization by evaluation to carry on.
-This means our surface syntax now <span style="font-style: italic">must</span> have annotations on <span style="font-style: italic">every</span> &#8869;-elim,
-thereby making <span class="stt">(syntax-ann (syntax-&#8869;-elim x) tp)</span> the only possibility, and <span class="stt">(syntax-&#8869;-elim x)</span> a syntax
-error.</p><p>If this seems convoluted, it&rsquo;s because it is. This will be fixed when we introduce dependent types, and the
-notion of a motive.</p><p><span style="font-weight: bold">Exercise 4:</span> <span style="font-style: italic">Tying the knot.</span> Modify <span class="stt">run-chk</span> and <span class="stt">run-syn</span> to produce a normal form of
+push <span class="stt">value-+-elim</span> onto the spine.</p><p>Note that <span class="stt">value-+-elim</span> takes <span style="font-style: italic">four</span> arguments: the types for <span class="math">f</span> and <span class="math">g</span> in the above rules,
+and <span class="math">f</span>, <span class="math">g</span> themselves. This is because in <span class="stt">reify-form</span>, we need to  have the types for <span class="math">f</span> and
+<span class="math">g</span> to recursively call <span class="stt">reify</span>, as we did for application.</p><p><span style="font-weight: bold">Exercise 3:</span> <span style="font-style: italic">Bottom.</span> We have no computation or uniqueness rule for bottom. However, it still
+needs to be added to <span class="stt">evaluate</span> and <span class="stt">reify</span>.</p><p>Design a function <span class="stt">do-&#8869;-elim : Type Value -&gt; Value</span> that performs bottom elimination. Note that since
+we have no concrete values of type <span class="math">&#8869;</span>, all your scrutine&#233;s will be cuts.</p><p>Again, <span class="stt">value-&#8869;-elim</span> needs a field for the type information &#8212;<wbr></wbr> this time, not because we need to recur
+in <span class="stt">reify-form</span>, but because our <span class="stt">syntax-&#8869;-elim</span> <span style="font-style: italic">also</span> needs that type information.</p><p>Then, extend <span class="stt">evaluate</span> and <span class="stt">reify</span>.</p><p><span style="font-weight: bold">Exercise 4:</span> <span style="font-style: italic">Tying the knot.</span> Modify <span class="stt">run-chk</span> and <span class="stt">run-syn</span> to produce a normal form of
 the elaborated syntax, rather than the elaborated syntax.</p><div class="navsetbottom"><span class="navleft"><div class="nosearchform"></div>&nbsp;&nbsp;<span class="tocsettoggle">&nbsp;&nbsp;<a href="javascript:void(0);" title="show/hide table of contents" onclick="TocsetToggle();">contents</a></span></span><span class="navright">&nbsp;&nbsp;<a href="Lecture_notes.html" title="backward to &quot;3 Lecture notes&quot;" data-pltdoc="x">&larr; prev</a>&nbsp;&nbsp;<a href="index.html" title="up to &quot;B629 Spring 2023 -- Proofs as Programs&quot;" data-pltdoc="x">up</a>&nbsp;&nbsp;<a href="Worksheets.html" title="forward to &quot;5 Worksheets&quot;" data-pltdoc="x">next &rarr;</a></span>&nbsp;</div></div></div><div id="contextindicator">&nbsp;</div></body></html>
