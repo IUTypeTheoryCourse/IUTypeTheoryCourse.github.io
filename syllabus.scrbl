@@ -30,7 +30,7 @@ See the homepage.
 @;#:row-properties '(bottom-border)
 (list
   (list @bold{Instructor} @bold{Contact Details} @bold{Office} @bold{Office Hours})
-  (list "Hazel Levine" @mailto["hrlevi@iu.edu"] "Luddy Hall 3015M" "10-11:30AM Tuesday")
+  (list "Tulip Amalie" @mailto["hrlevi@iu.edu"] "Luddy Hall 3015M" "10-11:30AM Tuesday")
   (list "" "" "" "12:30-2:30PM Friday")) 
 ]
 

@@ -1,7 +1,7 @@
 #lang scribble/manual
 
 @title[#:style '(toc)]{B629 Spring 2023 -- Proofs as Programs}
-@author[(author+email "Hazel Levine" "hrlevi@iu.edu")]
+@author[(author+email "Tulip Amalie" "hrlevi@iu.edu")]
 
 @;@bold{The exact contents of this entire course, and webpage, are currently subject to extreme change.}
 
