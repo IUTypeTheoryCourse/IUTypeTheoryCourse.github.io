@@ -35,7 +35,7 @@
     (,(+weeks first-thurs 10) . "A5 work session")
     (,(+weeks first-tues 11)  . "HoTT: equivalences and bi-invertible maps")
     (,(+weeks first-thurs 11) . "Agda: identity, Σ, universes")
-    (,(+weeks first-tues 12)  . "Agda: higher inductive types")
+    (,(+weeks first-tues 12)  . "Agda: higher inductive types and Special Time™")
     (,(+weeks first-thurs 12) . "Agda: dependent eliminators for HITs (not present in class)")
     (,(+weeks first-tues 13)  . "HoTT: contractibility")
     (,(+weeks first-thurs 13) . "HoTT: propositions, sets, truncations")
