@@ -24,3 +24,24 @@
 @item{@(hyperlink "https://www.youtube.com/watch?v=5JT3rhI_Pv0" "Video")}
 @item{@(hyperlink "https://github.com/martinescardo/HoTTEST-Summer-School/blob/main/Agda/HITs/Exercises4.lagda.md" "Exercises")}
 ]
+
+@section{April 6, 2023; Agda: Dependent eliminators for HITs}
+
+@itemlist[
+@item{@(hyperlink "https://www.youtube.com/watch?v=NM6obElFmSY" "Video")}
+@item{@(hyperlink "https://github.com/martinescardo/HoTTEST-Summer-School/blob/main/Agda/HITs/Exercises5.lagda.md" "Exercises")}
+]
+
+@section{April 11, 2023; HoTT: Contractibility}
+
+@itemlist[
+@item{@(hyperlink "https://www.youtube.com/watch?v=U6JPzRcuH8A" "Video")}
+@item{@(hyperlink "https://github.com/martinescardo/HoTTEST-Summer-School/blob/main/HoTT/Worksheets/ws6.pdf" "Exercises")}
+]
+
+@section{April 13, 2023; HoTT: Propositional truncation}
+
+@itemlist[
+@item{@(hyperlink "https://www.youtube.com/watch?v=-PemiK2nmyU" "Video")}
+@item{@(hyperlink "https://github.com/martinescardo/HoTTEST-Summer-School/blob/main/HoTT/Worksheets/ws8.pdf" "Exercises")}
+]
